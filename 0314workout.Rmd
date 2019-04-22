@@ -1,0 +1,70 @@
+---
+title: "0314workout"
+author: "양효정"
+date: "`r Sys.Date()`"
+# "`r Sys.Date()`" -> system date
+output: html_document
+---
+
+# R markdown 문서 작성 실습
+## 1. 텍스트 다루기
+
+**강조!!!**   
+_이탤릭_   
+*이탤릭*   
+
+세 칸 띄어쓰기 해야 줄이 넘어간다.
+
+아니면 두줄간격 하기   
+주석은 < !--, -- > 사이에 넣으면 된다. 띄어쓰기 빼고.
+<!-- bold로 나오나? -->
+``` {}
+"huh"
+```
+<!-- ``` {} ``` 사용시 box 만들어줌 -->
+
+- 하이픈 사용해서 목록
+* 별 하나도 가능
+    + 하위 목록
+    + 넣기 전에 탭 두번   
+1. 순차
+1. 목록
+1. 실습   
+    + 숫자로 하위 목록을 어떻게 넣는 건지 모르겠다.   
+
+
+수식 적는법 - LaTeX   
+혼자 나오는 애: $$E=MC^2$$
+텍스트와 함께: $E=MC^2$   
+
+텍스트와 같이 쓸 때는 하나만 붙이기.   
+안 그러면 수식 혼자 튀어나온다.   
+
+
+
+## 2. Chunk로 R code 넣기   
+
+
+```{r chunk_workout, echo=FALSE, message=FALSE, fig.width=10, fig.height=6}
+# ctrl + alt + i : new chunk shortcut
+# echo = F로 코드 출력 방지, message = F로 경고문 출력 방지
+# fig.width, fig.height로 plot size 조절
+
+library(ggplot2) #loading ggplot2 package
+library(gapminder) #loading gapminder package
+library(dplyr) #for glimpse
+glimpse(gapminder) #showing data structure - 출력됨
+head(gapminder) #loading gapminder data - head only - 출력됨
+
+plot(gapminder$pop, gapminder$year) #making graph - 출력됨
+
+
+```
+   
+   
+   
+   
+## 3. 인라인 코드
+
+인라인 코드가 뭔지 모르겠다.
+

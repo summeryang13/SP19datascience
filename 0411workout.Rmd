@@ -1,0 +1,68 @@
+---
+title: "0411workout"
+author: Hyojeong Yang
+date: "`r Sys.Date()`"
+output: html_document
+---
+# 데이터프레임 실습
+```{r databackgroud, echo=FALSE, message=FALSE}
+cats <- read.csv(file = "data/feline-data.csv")
+age <- c(2, 3, 5)
+cats <- cbind(cats, age)
+
+newRow <- list("tortoiseshell", 3.3, TRUE, 9)
+cats <- rbind(cats, newRow)
+
+levels(cats$coat) <- c(levels(cats$coat), "tortoiseshell")
+cats <- rbind(cats, list("tortoiseshell", 3.3, TRUE, 9))
+
+```
+
+## 도전과제 1.
+```{r q1, message=F}
+( human_age <- cats$age*7 )
+( human_age <- as.factor(human_age) )
+( human_age <- as.numeric(human_age) ) #factor에서 numeric으로 바뀌며 요인 순위가 숫자로 반환됨
+( human_age/7 ) #그래서 이전(cats$age)과 같은 결과 나오지 않음
+```
+
+```{r databackgroud2, echo=FALSE}
+cats <- na.omit(cats)
+```
+
+## 도전과제 2.
+```{r q2, message=FALSE}
+df_q2 <- data.frame(first_name = "Hyojeong",
+                    last_name = "Yang",
+                    fav_num = 1,
+                    stringsAsFactors = FALSE)
+df_q2 <- rbind(df_q2, c("Summer", "Yang", 5))
+df_q2 <- cbind(df_q2, coffee = c(T, T))
+df_q2
+```
+
+## 도전과제 3.
+```{r q3, message=FALSE}
+library(gapminder)
+nrow(gapminder)
+gapminder[1700:1704,] #마지막 5줄
+gapminder[c(550, 551, 564, 599), ] #중간 몇줄 점검
+```
+
+## 도전과제 4.
+```{r q4_loading, message=FALSE}
+download.file("https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/_episodes_rmd/data/gapminder_data.csv", destfile = "data/gapminder_data.csv") #서버에서 데이터 다운로드 후 csv 파일로 저장
+gapminder <- read.csv(file = "data/gapminder_data.csv") #gapminder에 불러오기
+```
+
+```{r q4, message=FALSE}
+source(file = "0411workout.R") #0411workout.R 실행
+head(gapminder)
+```
+
+## 도전과제 5
+```{r q5, message=FALSE}
+str(gapminder) #요인형, 정수형, 숫자형 벡터 보유
+colnames(gapminder) #변수 이름
+dim(gapminder) #1704행 6열 (1704*6차원) 데이터
+```

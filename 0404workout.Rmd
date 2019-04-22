@@ -1,0 +1,93 @@
+---
+title: "0404workout"
+author: Hyojeong Yang
+date: "`r Sys.Date()`"
+# "" 필수.
+output: html_document
+---
+
+# Data Structure 실습
+## 도전과제 1.
+
+```{r q1, message=FALSE}
+vec1 <- 1:26
+vec1 <- vec1^2
+names(vec1) <- LETTERS #이름 부여
+vec1
+
+```
+   
+   
+   
+## 도전과제 2.   
+
+```{r q2, message=FALSE}
+cats <- read.csv(file = "data/feline-data.csv") #파일 작성은 따로 함
+cats
+str(cats) #column 'coat' is factor.
+
+?read.csv #stringsAsFactors 명령어 설정 바꾸기.
+
+cats <- read.csv(file = "data/feline-data.csv", stringsAsFactors=FALSE)
+cats #설정 바꾸어 다시 불러옴
+str(cats$coat) #character 타입으로 변경!
+
+```
+   
+   
+   
+   
+## 도전과제 3.
+```{r q3, message=F}
+cats[1] #1번째 column을 list로 반환 
+typeof(cats[1])
+
+cats[[1]] #data frame을 list로 간주하여 첫번째 list의 원소를 반환
+typeof(cats[[1]])
+
+cats$coat #column 'coat'의 원소를 반환
+typeof(cats$coat)
+
+cats["coat"] #column 'coat'을 list로 반환 
+typeof(cats["coat"])
+
+cats[1, 1] #cats의 1번째 row, 1번째 column의 원소를 반환
+typeof(cats[1, 1])
+
+cats[, 1] #cats의 1번째 column의 원소를 반환
+typeof(cats[, 1])
+
+cats[1, ] #cats의 1번째 row의 원소를 반환
+typeof(cats[1, ]) #data type들이 다르기 때문에 (chr, num, int) list로 반환
+```
+   
+   
+   
+   
+## 도전과제 4.
+```{r q4, message=FALSE}
+matrix_example <- matrix(0, ncol=6, nrow=3)
+length(matrix_example)
+#길이가 안 나올 줄 알았는데 원소 개수를 세준다.
+```
+
+## 도전과제 5.
+```{r q5, message=FALSE}
+( q5_matrix <- matrix(1:50, nrow = 10, ncol = 5, byrow = T) ) #row 기준으로 채움
+( q5_matrix <- matrix(1:50, nrow = 10, ncol = 5) ) #column 기준으로 채움 - default
+
+```
+
+## 도전과제 6.
+```{r q6, message=FALSE}
+data_types <- c("double", "integer", "complex", "logical", "character")
+data_structures <- c("Data Frames", "Vectors", "Factors", "Lists", "Matrices")
+( q6_list <- list(data_types, data_structures) )
+```
+
+## 도전과제 7.
+```{r q7, message = F}
+# 정답 4번
+matrix(c(4, 1, 9, 5, 10, 7), ncol = 2, byrow = TRUE)
+```
+
