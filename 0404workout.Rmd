@@ -16,10 +16,12 @@ names(vec1) <- LETTERS #이름 부여
 vec1
 
 ```
+이름 부여된 벡터 생성 완료!
    
    
    
 ## 도전과제 2.   
+답은 주석으로 달았습니다.
 
 ```{r q2, message=FALSE}
 cats <- read.csv(file = "data/feline-data.csv") #파일 작성은 따로 함

@@ -61,6 +61,9 @@ plot(gapminder$pop, gapminder$year) #making graph - 출력됨
 
 ```
    
+- ctrl + alt + i : new chunk shortcut
+- echo = F로 코드 출력 방지, message = F로 경고문 출력 방지함.
+- fig.width, fig.height로 plot size 조절하여 plot 삽입.
    
    
    

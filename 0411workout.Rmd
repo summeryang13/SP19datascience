@@ -37,7 +37,7 @@ df_q2 <- data.frame(first_name = "Hyojeong",
                     fav_num = 1,
                     stringsAsFactors = FALSE)
 df_q2 <- rbind(df_q2, c("Summer", "Yang", 5))
-df_q2 <- cbind(df_q2, coffee = c(T, T))
+df_q2 <- cbind(df_q2, '커피시간인가요?' = c(T, T))
 df_q2
 ```
 
@@ -56,7 +56,7 @@ gapminder <- read.csv(file = "data/gapminder_data.csv") #gapminder에 불러오�
 ```
 
 ```{r q4, message=FALSE}
-source(file = "0411workout.R") #0411workout.R 실행
+source(file = "0411workout.R") #위에서 미리 만들어둔 0411workout.R 실행
 head(gapminder)
 ```
 

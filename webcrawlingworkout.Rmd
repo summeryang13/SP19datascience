@@ -1,0 +1,78 @@
+---
+title: "webcrawlingworkout"
+author: Hyojeong Yang
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+# R web crawling 실습
+
+## 도전과제 1. 다음 실시간 검색어 수집
+
+```{r q1, message=FALSE}
+#package loading
+library(tidyverse)
+library(httr)
+library(rvest)
+
+#get res from url
+res <- GET(url = 'https://www.daum.net')
+print(x = res) 
+
+#check server status - good to go!
+status_code(x = res)
+
+#get html elements
+html <- read_html(x = res) 
+span <- html_nodes(x = html, css = '#mArticle > div.cmain_tmp > div.section_media > div.hot_issue.issue_mini > div.hotissue_mini > ol > li > div > div > span.txt_issue > a') 
+searchWords <- html_text(x = span)
+
+#crawling results
+print(x = searchWords)
+
+#save results as text file
+write.table(x = searchWords, file = 'data/searchWords.txt')
+
+```
+
+
+## 도전과제 2. 네이버 증권 국내증시 KOSPI 상단 표 수집
+
+```{r q2, message=FALSE}
+#package loading
+library(httr)
+library(urltools)
+library(rvest)
+library(tidyverse)
+
+#get res from url
+res <- GET(url = 'https://finance.naver.com/sise/sise_index.nhn', 
+           query = list(code = 'KOSPI'))
+print(x = res)
+
+#check server status - good to go! 
+status_code(x = res)
+
+#get html elements
+res %>% 
+  read_html(encoding = 'euc-kr') %>% 
+  html_node(css = '#contentarea_left > div.box_top_sub > div > div.subtop_sise_detail > table')
+
+stocktbl <- res %>% 
+  read_html(encoding = 'euc-kr') %>% 
+  html_node(css = '#contentarea_left > div.box_top_sub > div > div.subtop_sise_detail > table') %>% 
+  html_table(fill = TRUE)
+
+#check crawling results - not tidy
+glimpse(stocktbl)
+
+#make results tidier - remove row #4
+stocktbl <- stocktbl[-4,]
+
+#tidy crawling results
+print(stocktbl)
+
+#save results as text file
+write.table(x = stocktbl, file = 'data/stocktbl.txt')
+```
+
