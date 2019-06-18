@@ -1,0 +1,208 @@
+---
+title: "0501lecture"
+author: hyojeong yang
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+## Base 그래프 - 필요 코드량이 가장 작다.
+```{r}
+sample_dat <- rnorm(100, 0, 1)
+sample_dat2 <- rnorm(100, 10, 5)
+
+hist(sample_dat)
+
+plot(sample_dat, sample_dat2)
+```
+
+
+Syntax Comparison cheatsheets : https://github.com/rstudio/cheatsheets/raw/master/translations/korean/syntax-kr.pdf
+
+
+
+```{r}
+library(gapminder)
+View(gapminder)
+
+library(tidyverse) #for pipe
+gapminder %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point()
+```
+
+## 축 추가
+
+```{r}
+#scales::percent로 하면 퍼센트가 X라벨에 찍힘 -> (value*100)% 반환하니 확률값에만 사용하기.
+
+gapminder %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() +
+  scale_x_continuous(labels = scales::comma) 
+
+```
+
+## 제목, 축 레이블, 캡션 추가
+
+```{r}
+# labs 옵션으로 제목 추가.
+gapminder %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() +
+  scale_x_continuous(labels = scales::percent) +
+  labs(title = "1인당 국민소득과 기대수명",
+       subtitle = "5년 시계열 데이터",
+       x = "1인당 국민소득",
+       y = "기대수명",
+       caption = "자료출처")
+
+
+gapminder %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() +
+  scale_x_log10(labels = scales::percent) +           ## scale_x_sqrt
+  labs(title = "1인당 국민소득과 기대수명",
+       subtitle = "5년 시계열 데이터",
+       x = "1인당 국민소득",
+       y = "기대수명",
+       caption = "자료출처")
+# x 스케일 수정
+
+```
+
+## 색상, 투명도 적용       
+```{r}
+gapminder %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, color = continent)) + 
+  geom_point(alpha=0.1) +
+  scale_x_continuous(labels = scales::percent) +
+  labs(title = "1인당 국민소득과 기대수명",
+       subtitle = "5년 시계열 데이터",
+       x = "1인당 국민소득",
+       y = "기대수명",
+       caption = "자료출처")
+# continent 별로 color 지정, opacity 지정 - geom_point
+```
+
+# jitter 적용
+```{r}
+# what is jitter
+gapminder %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, color = continent)) + 
+  geom_jitter(alpha=0.6) +
+  scale_x_continuous(labels = scales::percent) +
+  labs(title = "1인당 국민소득과 기대수명",
+       subtitle = "5년 시계열 데이터",
+       x = "1인당 국민소득",
+       y = "기대수명",
+       color = "대륙",
+       caption = "자료출처")
+```
+
+### 특정 대륙만 시각화
+```{r}
+library(ggplot2)
+#filtering 하면 새 data 안만들고도 편하게 사용 가능?
+#theme으로 예쁘게~~~
+gapminder %>% 
+  filter(continent %in% c("Africa","Asia")) %>%       ## 이 부분이 추가
+  ggplot(aes(x=gdpPercap, y=lifeExp, color = continent)) +  
+  geom_jitter(alpha=0.6) +
+  scale_x_continuous(labels = scales::percent) +
+  labs(title = "1인당 국민소득과 기대수명",
+       subtitle = "5년 시계열 데이터",
+       x = "1인당 국민소득",
+       y = "기대수명",
+       color = "대륙",
+       caption = "자료출처") +
+  theme_dark()
+```
+
+## template 지정
++ theme_bw / theme_economist
+
+## Xaringan 폰트 지정 + CSS
+https://statkclee.github.io/ds-authoring/ds-presn.html
+
+## small multiple 
+```{r}
+# spliting
+gapminder %>% 
+  filter(continent %in% c("Africa","Asia")) %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, color = continent)) + 
+  geom_jitter(alpha=0.6) +
+  scale_x_continuous(labels = scales::percent) +
+  labs(title = "1인당 국민소득과 기대수명",
+       subtitle = "5년 시계열 데이터",
+       x = "1인당 국민소득",
+       y = "기대수명",
+       color = "대륙",
+       caption = "자료출처") + theme_bw() +
+  facet_wrap(~continent) +                              # 이 부분부터 
+  theme(legend.position = "bottom")  
+```
+
+## 인터랙티브 그래프
+```{r}
+gapminder_g <- gapminder %>% 
+  filter(continent %in% c("Africa", "Asia")) %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, color=continent, 
+             text=paste0("1인당 GDP:", scales::comma(gdpPercap), "\n",
+                         "기대수명: ", lifeExp))) +
+    geom_point(alpha=0.5) +
+    scale_x_sqrt(labels = scales::comma) +
+    labs(title="1인당 국민소득과 기대수명",
+         subtitle="UN 5년 시계열 데이터",
+         color="대륙",
+         x="1인당 국민소득",
+         y="기대수명",
+         caption="자료출처: http://www.tidyverse.com") +
+       # theme_bw(base_family = "NanumGothic") +
+     facet_wrap(~continent) + #split option
+    theme(legend.position = "none")
+
+# 나눔고딕이 없어서 error 뜬다
+
+
+
+
+```
+
+```{r}
+library(plotly)
+ggplotly(gapminder_g, tooltip = "text") #커서 올리면 값 뜬다 wow
+```
+
+## 이형 그래프 조합
+```{r}
+boxplot_g <- gapminder %>% #creating boxplot
+  filter(continent %in% c("Africa", "Asia")) %>% 
+  ggplot(aes(x=continent, y=lifeExp, color=continent)) +
+    geom_boxplot(alpha=0.5)
+
+library(gridExtra)
+
+grid.arrange(gapminder_g, boxplot_g, nrow=1) #두개의 플랏 한 화면에
+```
+
+
+### gg animate 사용
+```{r}
+library(gganimate)
+library(gifski)
+library(png)
+
+#대박 짱
+
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, colour = country)) +
+  geom_point(show.legend = FALSE, alpha = 0.7) +
+  scale_color_viridis_d() +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  labs(title = '연도: {frame_time}', x = '1인당 GDP', y = '기대수명') +
+  transition_time(year) + #time variable
+  ease_aes('linear')
+
+```
+
+나머지 자료 강의노트 : https://etherpad.net/p/yonsei-20190502

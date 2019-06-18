@@ -1,0 +1,64 @@
+---
+title: '0411 dataframe'
+output: html_document
+author: Hyojeong Yang
+date: "`r Sys.Date()`"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- ctrl + alt + I : new chunk -->
+
+```{r}
+datasets::mtcars
+# 뒤에 :: 붙인다는건 package 의미
+
+colnames(mtcars) #var names
+nrow(mtcars) #observation num  
+str(mtcars) #structure summary?
+
+```
+
+
+## tidyverse 구문 (Syntax)
+
+```{r}
+library(tidyverse)
+mtcars %>% 
+  select(mpg, am, wt, hp) %>% 
+  filter(mpg > 25) %>% 
+  arrange(mpg) %>%  #mpg로 내림차순, arrange(desc(mpg)) 하면 역순
+  mutate(metric = hp/wt)
+
+mtcars %>% 
+  mutate(auto_yn = ifelse(am ==1, "Auto", "수동")) %>% 
+  group_by(auto_yn) %>% 
+  summarise(mean_mpg = mean(mpg),
+            std_mpg = sd(mpg),
+            min_mpg = min(mpg),
+            med_mpg = median(mpg),
+            max_mpg = max(mpg),
+            차댓수 = n())
+
+```
+
+y의 길이가 맞아야 dataframe으로 기능할 수 있다. 
+
+통계|전산
+----|--------
+변수|column
+obs|records
+dataframe|table
+
+- 한 열 선택: select
+- 한 행 선택: filter
+- 새 열 추가: mutate
+- 데이터 정렬: arrange
+- 그룹별 요약: summarize + groupby
+
+
+

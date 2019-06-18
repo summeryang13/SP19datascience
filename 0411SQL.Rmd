@@ -1,0 +1,123 @@
+---
+title: "0411SQL"
+author: Hyojeong Yang
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# SQL 실습   
+```{r backgroundSetting, message=FALSE}
+library(RSQLite)
+library(dplyr)
+library(tidyverse)
+
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+copy_to(con, mtcars)
+
+mtcars_db <- tbl(con, "mtcars")
+
+mtcars_db %>% 
+  filter(mpg >20) #mpg > 20인 data만 불러오기
+
+###
+
+dbplyr::src_dbi(con)
+
+tbl(con, sql("SELECT mpg, cyl, vs, am FROM mtcars WHERE mpg > 20"))
+
+tbl(con, sql("SELECT mpg, cyl, vs, am FROM mtcars WHERE mpg > 20")) %>% 
+  ggplot(aes(x=as.factor(am), y=mpg)) +
+    geom_boxplot()
+
+###
+
+dir.create("data", showWarnings = FALSE)
+download.file(url = "https://ndownloader.figshare.com/files/2292171",
+              destfile = "data/portal_mammals.sqlite", mode = "wb")
+
+library(dbplyr)
+mammals <- DBI::dbConnect(RSQLite::SQLite(), "data/portal_mammals.sqlite")
+
+src_dbi(mammals) #데이터 구성 살펴보기
+
+tbl(mammals, sql("SELECT year, species_id, plot_id FROM surveys"))
+
+surveys <- tbl(mammals, "surveys")
+surveys %>%
+    select(year, species_id, plot_id)
+head(surveys, n = 10)
+nrow(surveys) #동작하지 않음
+
+surveys %>%
+  filter(weight < 5) %>% #filter - weight < 5인 row 추출
+  select(species_id, sex, weight) #추출할 column 선택
+
+data_subset <- surveys %>%
+  filter(weight < 5) %>% 
+  select(species_id, sex, weight) 
+
+data_subset %>%
+  select(-sex) #sex column만 빼고 추출
+
+data_subset <- surveys %>%
+  filter(weight < 5) %>%
+  select(species_id, sex, weight) %>%
+  collect() #뽑은 데이터 전부 보여줌
+
+plots <- tbl(mammals, "plots")
+plots
+
+plots %>%
+  filter(plot_id == 1) %>% #plot_id가 1인 plot만 추출
+  inner_join(surveys) %>% #이건 무슨 코드지?
+  collect() #전부 보여주세요
+
+```
+
+## 도전과제 1.
+```{r sql1, message=FALSE}
+species <- tbl(mammals, "species")
+
+left_join(surveys, species) %>%
+  filter(taxa == "Rodent") %>%
+  group_by(taxa, year) %>%
+  tally %>%
+  collect()
+
+query <- paste("
+SELECT a.year, b.taxa,count(*) as count
+FROM surveys a
+JOIN species b
+ON a.species_id = b.species_id
+AND b.taxa = 'Rodent'
+GROUP BY a.year, b.taxa",
+sep = "" )
+
+tbl(mammals, sql(query))
+
+# 이해하지 못했다...
+```
+
+## 도전과제 2.
+```{r sql2, message=FALSE}
+
+species <- tbl(mammals, "species")
+genus_counts <- left_join(surveys, plots) %>%
+  left_join(species) %>%
+  group_by(plot_type, genus) %>%
+  tally %>%
+  collect()
+genus_counts
+
+# 이해하지 못했다......
+```
+
+```{r backgroundsetting2, message=FALSE}
+#csv로 저장부터 해야됨 ㅡㅡ
+
+species <- read_csv("data/species.csv")
+surveys <- read_csv("data/surveys.csv")
+plots <- read_csv("data/plots.csv")
+
+```
+
