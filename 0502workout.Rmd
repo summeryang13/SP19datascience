@@ -1,0 +1,85 @@
+---
+title: "0502workout"
+author: "Hyojeong Yang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setting}
+#package loading
+library(ggplot2) 
+library(gapminder)
+```
+
+
+# 도전과제 1.   
+```{r q1}
+#year as x
+ggplot(data = gapminder, aes(x = year, y = lifeExp)) + geom_point()
+```
+
+기대수명의 분포가 시간의 흐름에 따라 어떻게 변화했는지 시각적으로 확인할 수 있다.   
+
+# 도전과제 2.
+```{r q2}
+#coloring by continents (auto selected colors)
+ggplot(data = gapminder, aes(x = year, y = lifeExp,
+                             color = continent)) + geom_point()
+```
+
+대륙별로 색이 다르게 지정되었다.   
+예상 가능한 것처럼 유럽, 미국이 전반적으로 높은 기대수명을 보이고 아프리카가 상대적으로 낮은 기대수명을 보이는 것을 확인할 수 있다.   
+
+```{r q2-1}
+library(wesanderson) #package for color palette
+
+#change color palette
+ggplot(data = gapminder, aes(x = year, y = lifeExp, color = continent)) + geom_point() + scale_color_manual(values = wes_palette(n = 5, name="Darjeeling1"))
+```
+
+컬러 팔레트를 바꾼 결과이다. 팔레트 색상에 따라 점의 색상도 변경되었다.   
+
+# 도전과제 3.
+점이 먼저 그려지고 선이 나중에 그려져 선이 점 위에 그려질 것으로 예상된다.   
+```{r q3}
+#change order
+ggplot(data = gapminder, aes(x=year, y=lifeExp, by=country)) + geom_point() + geom_line(aes(color=continent))
+```
+
+예상한 결과와 같이 선이 점 위에 그려졌다.   
+
+#도전과제 4.
+#### 도전과제 4-a.
+```{r q4-a}
+#add color & size adjestment in "geom_point()"
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(color = "skyblue", size = 2.5) + scale_x_log10() + geom_smooth(method="lm", size=1.5)
+```
+
+점 색상이 하늘색으로 변경되고 크기 역시 커졌다.   
+
+#### 도전과제 4-b.
+```{r q4-b}
+#add shape & color adjustment by continents
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent, shape = continent)) +
+  geom_point() + scale_x_log10() + geom_smooth(method="lm", size=1.5)
+```
+
+대륙별로 다른 점 모양과 색상, 각각의 추세선이 나타나 있다.   
+
+# 도전과제 5.
+
+```{r q5}
+ggplot(data = gapminder, aes(x = gdpPercap, fill = continent)) +
+ geom_density() + facet_wrap( ~ year) + labs(
+   x = "GDP per Capita",
+   title = "GDP per Capita by continents"
+ )
+```
+
+x축을 GDP per Capita로 변경하였고 대륙별로 채우기를 사용하였다.   
+색의 투명도 조정은 하지 않았으며 년도에 따라 밀도 그래프가 나타나도록 연도 패싯 계층을 추가했다.

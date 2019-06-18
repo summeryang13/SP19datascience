@@ -1,0 +1,80 @@
+---
+title: "shinyWorkout"
+author: Hyojeong Yang
+date: "`r Sys.Date()`"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Shiny Web App!
+## 데이터 살펴보기
+```{r}
+head(mtcars)
+```
+
+## 앱 제작하기
+```{r}
+#패키지 로딩
+library(shiny)
+require(ggplot2)
+```
+
+### ui
+```{r ui}
+ui <- fluidPage(
+  headerPanel('mtcars Regression'),
+    sidebarLayout(
+  sidebarPanel(
+    selectInput(
+               inputId = "x",
+               label = "Explanatory Variable", names(mtcars),
+               choices = c("", names(mtcars)[-1])
+               ),
+    actionButton(inputId = "analysis", label = " Analysis "),
+          hr()
+
+                 ),
+mainPanel(plotOutput("plot"),verbatimTextOutput("text"))
+))
+```
+
+### server
+```{r server}
+server <- function(input, output) {
+  
+    output$plot <- renderPlot({
+     input$analysis
+    
+     isolate({
+       
+     ggplot(data=mtcars, aes_string(req(input$x),"mpg"))+
+         geom_point()+
+         geom_smooth(method="lm")
+     })
+  })
+
+
+  output$text=renderPrint({
+    
+    input$analysis
+    
+    isolate({
+    options(digits = 4)
+    fit <- eval(parse(text=paste0("lm(mpg ~",req(input$x),",data = mtcars)")))
+    summary(fit)
+    })
+  })
+
+}  
+
+```
+
+## 앱 로딩
+```{r}
+shinyApp(ui,server)
+```
+
